@@ -1,0 +1,12 @@
+config:
+  target: "http://34.64.184.213/" # 테스트 호스트정보
+  phases:
+    - duration: 360  #접근시간
+      arrivalRate: 1 #사용자수
+      name: Warm up
+
+scenarios:
+  - name: "just hash"
+    flow:
+      - get:
+          url: "/hash/123" # 테스트 URI
