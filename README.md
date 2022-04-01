@@ -4,4 +4,3 @@
 # 젠킨스 배포자동화
 
 # 참고
-- 강의주소 : https://class101.net/classes/5fc4a3b3fc231b000d856415/challenge
