@@ -215,33 +215,106 @@ sudo systemctl status jenkins;
     ```bash
     nohup docker run -p 8080:80 devswsong/spring-boot-cpu-bound nohup.out 2>&1 &
     ```
-    
 
-# 엔진엑스를 활용한 로드벨런서 설정
-
-# GCP서버 인스턴스 늘리기
-
-머신이미지는 기존의 인스턴스를 복제하는 역할을함 (설치한 프로그램은 복제되지않음)
-
-- 머신이미지 → 머신이미지 만들기 선택
-- 소스 VM 인스턴스에 복제할 원본 인스턴스 생성
-
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/04de4449-8c35-4e09-bd25-97f22e971d70/Untitled.png)
-
-- 인스턴스 생성
-    - 머신이미지 → 작업 → 인스턴스 만들기 선택
-    
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ae84a108-b5f7-4e3a-adfd-23d8c56a9c1b/Untitled.png)
-    
-
-# 추가한 인스턴스 ssh 접근할수 있도록 수정
-
-- 대시보드 → 환경설정 → SSH서버 추가 (2개 인스턴스 모두 추가함)
-    
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/61c757e0-f38b-4a30-85fc-b4a479a21de2/Untitled.png)
-    
 
 # 젠킨스 빌드시 추가한 인스턴스에도 배포되도록 수정
 
 - 대시보드 → 아이템 선택 → 설정 → 빌드후 조치 → Add Server 선택
--
+- 추가후 Build Now 클릭시 3개 서버에 동시에 배포됨
+    - 2,3번 인스턴스에 도커가 실행 되지 않은경우 에러발생하므로 도커 실행할것
+    - 젠킨스에서는 빌드성공으로 출력되더라도 서버로그 확인시 에러가 발생했을수 있음
+
+# 엔진엑스 인스턴스 생성
+
+- 서버 인스턴스 생성
+    - 서버 스팩 미디움으로 설치
+    - 서울리전은 4개밖에 인스턴스 추가가 안되므로 다른 리전에 생성할것
+- 서버 인스턴스에 엔진엑스 설치
+
+    ```bash
+    sudo yum install -y nginx
+    
+    # 엔진엑스 실행
+    sudo systemctl start nginx
+    ```
+
+
+# 엔진엑스 로드벨런싱 설정
+
+- 엔진엑스 공식문서
+
+  [HTTP Load Balancing](https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/)
+
+- 설정파일 열기
+
+    ```bash
+    sudo vi /etc/nginx/nginx.conf
+    ```
+
+- 로드벨런싱 설정추가
+    - upstream : 로드벨런싱할 서버 IP포트 설정정보 입력
+    - location : 로드벨런싱할 URL정보 입력
+
+    ```bash
+    ```
+
+  include /etc/nginx/conf.d/*.conf;
+
+  upstream cpu-bound-app {
+  server {instance_1번의_ip}:8080 weight=100 max_fails=3 fail_timeout=3s;
+  server {instance_2번의_ip}:8080 weight=100 max_fails=3 fail_timeout=3s;
+  server {instance_3번의_ip}:8080 weight=100 max_fails=3 fail_timeout=3s;
+  }
+
+  server {
+
+    ```
+    include /etc/nginx/default.d/*.conf;
+    
+    location / {
+      proxy_pass http://cpu-bound-app;
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection 'upgrade';
+      proxy_set_header Host $host;
+      proxy_cache_bypass $http_upgrade;
+    }
+    
+    error_page 404 /404.html;
+    location = /404.html {
+    }
+    
+    ```
+    ```
+    
+- 엔진엔스 connect() 함수사용할수 있도록 설정변경
+
+  엔진엑스는 기본적으로 connect() 함수를 사용불가능하므로 사용할수 있게 변경처리해야함
+
+  변경하지 않으면 엔진엑스 접근시 로드벨런싱이 되지 않고 아레 에러가 로그에 출력됨
+
+    ```bash
+    connect() to 10.178.0.8:8080 failed (13: Permission denied) while connecting to upstrea
+    ```
+
+  아래 명령어 실행해 connect() 함수 사용할수 있도록 변경
+
+    ```bash
+    sudo setsebool -P httpd_can_network_connect on
+    ```
+
+- 엔진엑스 서버 접근
+    - [http://서버주소](http://서버주소)
+- 로드벨런싱이 적용되었는지 확인
+    - [http://서버주소](http://서버주소)/hash/123
+
+    ```bash
+    # 엔진엑스 서버상태 확인
+    sudo systemctl status nginx.service
+    ```
+
+  에러로그 확인
+
+    ```bash
+    sudo tail -f /var/log/nginx/error.log;
+    ```
