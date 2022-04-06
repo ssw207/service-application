@@ -1,8 +1,8 @@
 config:
   target: "http://34.64.184.213/" # 테스트 호스트정보
   phases:
-    - duration: 360  #접근시간
-      arrivalRate: 1 #사용자수
+    - duration: 360  #테스트시간
+      arrivalRate: 1 #TPU
       name: Warm up
 
 scenarios:

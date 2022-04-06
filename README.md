@@ -318,3 +318,24 @@ sudo systemctl status jenkins;
     ```bash
     sudo tail -f /var/log/nginx/error.log;
     ```
+# 로드벨런서 적용후 스트레스 테스트
+
+- 시나리오
+  1. 5분간 TPU 8~16사이로 인스턴스 1~3개를 이용해 테스트
+  2. 5분간 TPU를 높여보면서 서버가 언제 요청을 받지 못하는지(500, 502에러 리턴) 확인
+- 설정
+
+    ```yaml
+    config:
+      target: "http://34.64.184.213/" # 테스트 호스트정보
+      phases:
+        - duration: 360 # 테스트시간
+          arrivalRate: 8 # 목표 TPU
+          name: Warm up
+    
+    scenarios:
+      - name: "just hash"
+        flow:
+          - get:
+              url: "/hash/123" # 테스트 URI
+    ```
