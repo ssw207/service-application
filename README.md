@@ -339,3 +339,15 @@ sudo systemctl status jenkins;
           - get:
               url: "/hash/123" # 테스트 URI
     ```
+
+# Git 사용법
+## 원하는 시점으로 커밋 롤백하기
+
+1. 원하는 시점 선택
+
+   ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/54034652-58e7-4e90-a279-1750836f5c32/Untitled.png)
+
+2. 이 커밋하까지 현재 브랜치를 초기화 버튼 클릭 - 하드 선택
+  - 하드 선택시 깃커밋 내용과 소스작업내용이 모두 삭제되고 이전 커밋상태가됨
+
+   ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/4faa6183-7744-4e3a-aacd-f6478c1a42f8/Untitled.png)
