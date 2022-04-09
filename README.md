@@ -10,10 +10,10 @@
 sudo yum install -y wget;
 sudo yum install -y maven;
 sudo yum install -y git;
-sudo yum install -y docker;
-sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo;
+sudo yum install -y docker;https://pkg.jenkins.io/redhat-stable/jenkins.repo;
 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key;
 sudo yum install -y jenkins;
+sudo wget -O /etc/yum.repos.d/jenkins.repo 
 sudo systemctl start jenkins;
 sudo systemctl status jenkins;
 ```
@@ -351,3 +351,23 @@ sudo systemctl status jenkins;
   - 하드 선택시 깃커밋 내용과 소스작업내용이 모두 삭제되고 이전 커밋상태가됨
 
    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/4faa6183-7744-4e3a-aacd-f6478c1a42f8/Untitled.png)
+
+# git에서 jar파일 빌드
+
+1. 대시보드 → 아이템 → 설정 → 소스코드관리 → git선택
+
+   ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/974a558c-2ea9-4bfd-a7f5-661be5222f5d/Untitled.png)
+
+   ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/438ae655-d6eb-483b-a3ab-1fa7c37cb2dd/Untitled.png)
+
+2. Build → add build step 선택 → excute shell 선택
+
+   기본적으로 mvnw 파일이 윈도우에서 생성되어 실행권한이 없으므로 실행권을 추가해줘야함
+
+    ```yaml
+    chmod 544 ./mvnw
+    ./mvnw clean package
+    ```
+
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/3ea766a4-c2a9-4c03-a65f-2a1227ff1d72/Untitled.png)
