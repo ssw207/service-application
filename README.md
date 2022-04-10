@@ -371,3 +371,15 @@ sudo systemctl status jenkins;
 
 
 ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/3ea766a4-c2a9-4c03-a65f-2a1227ff1d72/Untitled.png)
+
+# 깃허브 웹훅 설정
+
+- 레파지토리 → settings → webhooks → add webhooks
+
+  ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2c197b75-86b3-4edb-953d-aa55f412d563/Untitled.png)
+
+- 설정입력
+  - payload url : 젠킨스 호스트 정보 입력
+    - ex) [http://34.64.184.213:8080/github-webhook/](http://34.64.184.213:8080/github-webhook/)
+
+  ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/9131a001-bc6c-49c5-8c10-bdbe75e97a29/Untitled.png)
